@@ -1,4 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
   <string name="app_name">Xamarin.ExifLocation</string>
+  <string name="get_picture">Get picture</string>
+  <string name="set_location">Set location</string>
+  <string name="current_location">Current location:</string>
+  <string name="image_location">Image location:</string>
+  <string name="no_location">No location</string>
 </resources>

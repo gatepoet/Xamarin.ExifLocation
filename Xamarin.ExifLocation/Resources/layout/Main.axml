@@ -3,5 +3,59 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    >
+    android:padding="10dp">
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/linearLayout1">
+        <TextView
+            android:text="@string/current_location"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent" />
+        <TextView
+            android:text="@string/no_location"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:id="@+id/deviceLocationText"
+            android:layout_marginLeft="10dp" />
+    </LinearLayout>
+    <Button
+        android:text="@string/get_picture"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/get_picture" />
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/linearLayout1">
+        <TextView
+            android:text="@string/image_location"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:id="@+id/textView1" />
+        <TextView
+            android:text="@string/no_location"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:id="@+id/imageLocationText"
+            android:layout_marginLeft="10dp" />
+    </LinearLayout>
+    <Button xmlns:p2="http://schemas.android.com/tools"
+        android:text="@string/set_location"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/set_location"
+        p2:visibility="invisible" />
+    <ImageView
+        android:src="@android:drawable/ic_menu_gallery"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/selected_image"
+        android:layout_gravity="center" />
 </LinearLayout>
