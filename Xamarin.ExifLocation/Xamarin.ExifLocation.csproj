@@ -108,6 +108,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BitmapLoader.cs" />
     <Compile Include="GPS.cs" />
     <Compile Include="LocationHelper.cs" />
     <Compile Include="MainActivity.cs" />

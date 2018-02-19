@@ -157,16 +157,42 @@ namespace Xamarin.ExifLocation
 
         private void ShowImage(Uri data)
         {
-            imageUri = data;
+            imageUri = Uri.FromFile(new File(GetRealPathFromURI(data)));
             
-            var exif = new ExifInterface(ContentResolver.OpenInputStream(imageUri));
+            var exif = new ExifInterface(imageUri.Path);
             var location = exif.ReadLocation();
             FindViewById<TextView>(Resource.Id.imageLocationText).Text = location.ToFormattedString(this);
 
-            FindViewById<ImageView>(Resource.Id.selected_image).SetImageURI(imageUri);
+            var bitmap = BitmapLoader.LoadImage(
+                imageUri.Path,
+                Resources.DisplayMetrics.WidthPixels,
+                Resources.DisplayMetrics.HeightPixels);
+            FindViewById<ImageView>(Resource.Id.selected_image).SetImageBitmap(bitmap);
             FindViewById<Button>(Resource.Id.set_location).Visibility = ViewStates.Visible;
         }
 
+        private string GetRealPathFromURI(Uri contentURI)
+        {
+            var cursor = ContentResolver.Query(contentURI, null, null, null, null);
+            cursor.MoveToFirst();
+            string documentId = cursor.GetString(0);
+            //documentId = documentId.Split(':')[1];
+            cursor.Close();
+
+            cursor = ContentResolver.Query(
+                MediaStore.Images.Media.ExternalContentUri,
+                null,
+                MediaStore.Images.Media.InterfaceConsts.Id + " = ? ",
+                new[] { documentId }
+                , null
+            );
+
+            cursor.MoveToFirst();
+            string path = cursor.GetString(cursor.GetColumnIndex(MediaStore.Images.Media.InterfaceConsts.Data));
+            cursor.Close();
+
+            return path;
+        }
         #endregion
 
         #region Set location
