@@ -1,6 +1,6 @@
 ﻿using Android.Locations;
 using Android.Media;
-using Android.Icu.Text;
+using Java.Text;
 using Java.Util;
 using Android.Content;
 

@@ -1,13 +1,10 @@
-﻿using Android.App;
-using Android.Widget;
+﻿using Android.Widget;
 using Android.OS;
 using Android.Content;
 using Android.Runtime;
 using Android.Views;
-using Android;
 using Android.Content.PM;
 using Android.Util;
-using Android.Gms.Location;
 using System.Threading.Tasks;
 using Android.Locations;
 using Android.Provider;
@@ -15,15 +12,22 @@ using Java.IO;
 using System.Linq;
 using Android.Media;
 using Android.Net;
+using Android.Support.V7.App;
+using Android.App;
+using AlertDialog = Android.Support.V7.App.AlertDialog;
+using Android.Support.V4.Content;
+using Android.Graphics;
+using Android.Gms.Location;
+using Android;
 
 namespace Xamarin.ExifLocation
 {
     [Activity(Label = "Xamarin.ExifLocation", MainLauncher = true)]
-    public class MainActivity : Activity
+    public class MainActivity : AppCompatActivity
     {
-        private const int SelectImageRequest = 67676;
-        private const int GetLocationRequest = 67677;
-        private const int WriteExternalStorageRequest = 67678;
+        private const int SelectImageRequest = 7676;
+        private const int GetLocationRequest = 7677;
+        private const int WriteExternalStorageRequest = 7678;
 
         private Location deviceLocation;
         private Uri imageUri;
@@ -44,10 +48,9 @@ namespace Xamarin.ExifLocation
 
         private async Task GetLocation()
         {
-            if (CheckSelfPermission(Manifest.Permission.AccessFineLocation) == Permission.Granted)
+            if (PermissionChecker.CheckSelfPermission(this, Manifest.Permission.AccessFineLocation) == (int)Permission.Granted)
             {
-                var locationClient = LocationServices.GetFusedLocationProviderClient(this);
-                deviceLocation = await locationClient.GetLastLocationAsync();
+                deviceLocation = await GetLastLocation();
                 if (deviceLocation != null)
                 {
                     FindViewById<TextView>(Resource.Id.deviceLocationText).Text = deviceLocation.ToFormattedString(this);
@@ -60,6 +63,43 @@ namespace Xamarin.ExifLocation
             else
             {
                 RequestPermissions(new[] { Manifest.Permission.AccessFineLocation }, GetLocationRequest);
+            }
+        }
+
+        private async Task<Location> GetLastLocation()
+        {
+            if (Build.VERSION.SdkInt >= BuildVersionCodes.M)
+            {
+                var locationClient = LocationServices.GetFusedLocationProviderClient(this);
+                return await locationClient.GetLastLocationAsync();
+            }
+            else
+            {
+                var locationManager = (LocationManager)GetSystemService(LocationService);
+                var providers = locationManager.GetProviders(true);
+
+                return providers.Select(locationManager.GetLastKnownLocation)
+                    .Where((location) => location != null)
+                    .Aggregate((location, best) => location.Accuracy < best.Accuracy ? location : best);
+
+
+                //Location bestLocation = null;
+                //
+                //foreach (var provider in providers)
+                //{
+                //    Location location = locationManager.GetLastKnownLocation(provider);
+                //    if (location == null)
+                //    {
+                //        continue;
+                //    }
+                //    if (bestLocation == null || location.Accuracy < bestLocation.Accuracy)
+                //    {
+                //        // Found best last known location: %s", l);
+                //        bestLocation = location;
+                //    }
+                //}
+                //
+                //return bestLocation;
             }
         }
 
@@ -118,7 +158,7 @@ namespace Xamarin.ExifLocation
         private void ShowImage(Uri data)
         {
             imageUri = data;
-
+            
             var exif = new ExifInterface(ContentResolver.OpenInputStream(imageUri));
             var location = exif.ReadLocation();
             FindViewById<TextView>(Resource.Id.imageLocationText).Text = location.ToFormattedString(this);
